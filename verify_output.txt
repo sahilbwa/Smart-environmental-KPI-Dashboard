@@ -1,0 +1,23 @@
+﻿2026-04-21 19:04:04,713 [INFO] database: Database initialised at: C:\Users\sbawa\Desktop\KPI dashboard\environmental_kpi.db
+2026-04-21 19:04:04,805 [INFO] database: Inserted 0 new records into environmental_data.
+Python: 3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]
+
+Γ£à All modules imported successfully
+Γ£à database.init_db() OK
+Γ£à database.fetch_data() ΓÇö 165 existing rows
+Γ£à kpi_engine.get_latest_kpis() ΓÇö 5 metrics
+Γ£à kpi_engine.calculate_monthly_kpis() ΓÇö 6 months (resample 'ME' OK)
+   aqi                   : 69.85  conf=Low  R┬▓=0.354
+   water_usage           : 1520.92  conf=Low  R┬▓=0.354
+   energy_consumption    : 752.70  conf=Low  R┬▓=0.354
+   waste_generated       : 142.79  conf=Low  R┬▓=0.354
+   co2_emissions         : 276.24  conf=Low  R┬▓=0.354
+Γ£à ml_model.generate_all_predictions() ΓÇö 5 predictions
+Γ£à ml_model.get_anomaly_summary() ΓÇö 0 anomalies across 0 metrics
+Γ£à ml_model.get_spike_alerts() ΓÇö 0 AQI spike(s)
+Γ£à data_loader.py ΓÇö no Streamlit dependency (pure Python)
+Γ£à Deduplication ΓÇö re-upload of existing data inserted 0 new rows (correct)
+
+==================================================
+Γ£à  ALL 10 CHECKS PASSED ΓÇö production ready!
+==================================================
