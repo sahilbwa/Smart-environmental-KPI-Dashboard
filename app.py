@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 st.set_page_config(
     page_title="Smart Environmental KPI Dashboard",
-    page_icon="🌍",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -51,53 +51,87 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 st.markdown("""
 <style>
-/* ── KPI card wrappers ── */
-.kpi-box-ok, .kpi-box-warning, .kpi-box-critical {
-    padding: 18px 20px 14px 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
-    border-top: none !important;
-    border-right: none !important;
-    border-bottom: none !important;
+/* ── Unified KPI Cards ── */
+.kpi-card {
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
 }
 
-/* Strip Streamlit's default metric styling */
-div[data-testid="stMetric"] {
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+.kpi-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-div[data-testid="stMetricDeltaIcon"],
-div[data-testid="stMetricDelta"] svg { display: none !important; }
+
+.kpi-value {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.kpi-delta {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.kpi-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    font-size: 0.9rem;
+}
+
+.kpi-target {
+    font-weight: 600;
+}
 
 /* Status: OK */
-.kpi-box-ok { background-color: rgba(76,175,80,0.08) !important; border-left: 4px solid #4caf50 !important; }
-.kpi-box-ok [data-testid="stMetricValue"] { color: #2e7d32 !important; }
-.kpi-box-ok [data-testid="stMetricLabel"] { color: #33691e !important; font-weight: 600; }
-.kpi-box-ok [data-testid="stMetricDelta"] { color: #388e3c !important; }
+.kpi-card-ok { background-color: rgba(76,175,80,0.08); border-left: 4px solid #4caf50; }
+.kpi-card-ok .kpi-title { color: #33691e; }
+.kpi-card-ok .kpi-value { color: #2e7d32; }
+.kpi-card-ok .kpi-delta { color: #388e3c; }
+.kpi-card-ok .kpi-footer { border-top: 1px solid rgba(76,175,80,0.2); }
+.kpi-card-ok .kpi-target { color: #33691e; }
+.kpi-card-ok .status-badge { background-color: #4caf50; color: white; }
 
 /* Status: Warning */
-.kpi-box-warning { background-color: rgba(255,152,0,0.08) !important; border-left: 4px solid #ff9800 !important; }
-.kpi-box-warning [data-testid="stMetricValue"] { color: #bf360c !important; }
-.kpi-box-warning [data-testid="stMetricLabel"] { color: #e65100 !important; font-weight: 600; }
-.kpi-box-warning [data-testid="stMetricDelta"] { color: #f57c00 !important; }
+.kpi-card-warning { background-color: rgba(255,152,0,0.08); border-left: 4px solid #ff9800; }
+.kpi-card-warning .kpi-title { color: #e65100; }
+.kpi-card-warning .kpi-value { color: #bf360c; }
+.kpi-card-warning .kpi-delta { color: #f57c00; }
+.kpi-card-warning .kpi-footer { border-top: 1px solid rgba(255,152,0,0.2); }
+.kpi-card-warning .kpi-target { color: #e65100; }
+.kpi-card-warning .status-badge { background-color: #ff9800; color: white; }
 
 /* Status: Critical */
-.kpi-box-critical { background-color: rgba(244,67,54,0.08) !important; border-left: 4px solid #f44336 !important; }
-.kpi-box-critical [data-testid="stMetricValue"] { color: #b71c1c !important; }
-.kpi-box-critical [data-testid="stMetricLabel"] { color: #c62828 !important; font-weight: 600; }
-.kpi-box-critical [data-testid="stMetricDelta"] { color: #c62828 !important; }
+.kpi-card-critical { background-color: rgba(244,67,54,0.08); border-left: 4px solid #f44336; }
+.kpi-card-critical .kpi-title { color: #c62828; }
+.kpi-card-critical .kpi-value { color: #b71c1c; }
+.kpi-card-critical .kpi-delta { color: #c62828; }
+.kpi-card-critical .kpi-footer { border-top: 1px solid rgba(244,67,54,0.2); }
+.kpi-card-critical .kpi-target { color: #c62828; }
+.kpi-card-critical .status-badge { background-color: #f44336; color: white; }
 
 /* Status badge pill */
 .status-badge {
-    display: inline-block; padding: 3px 10px; border-radius: 12px;
-    font-size: 0.68rem; font-weight: 700; margin-top: 6px;
-    text-transform: uppercase; letter-spacing: 0.6px;
+    display: inline-block; 
+    padding: 4px 12px; 
+    border-radius: 12px;
+    font-size: 0.75rem; 
+    font-weight: 700;
+    text-transform: uppercase; 
+    letter-spacing: 0.6px;
 }
-.status-ok       { background-color: #4caf50; color: white; }
-.status-warning  { background-color: #ff9800; color: white; }
-.status-critical { background-color: #f44336; color: white; }
 
 h1 { color: #1f77b4; }
 .stAlert { margin-top: 1rem; }
@@ -146,10 +180,10 @@ def get_current_weather() -> str:
         with urllib.request.urlopen(req, timeout=5) as resp:
             raw = resp.read().decode("utf-8", errors="replace").strip()
         if any(kw in raw for kw in ("Unknown", "unreachable", "Sorry")):
-            return "🌤️ Weather unavailable"
+            return " Weather unavailable"
         return raw
     except Exception:
-        return "🌤️ Weather unavailable"
+        return " Weather unavailable"
 
 
 # ---------------------------------------------------------------------------
@@ -176,30 +210,27 @@ def display_kpi_card(metric_name: str, kpi_info: dict, col) -> None:
 
         # CSS classes based on status
         status_map = {
-            "OK":       ("kpi-box-ok",       "status-ok"),
-            "Warning":  ("kpi-box-warning",  "status-warning"),
-            "Critical": ("kpi-box-critical", "status-critical"),
+            "OK":       "kpi-card-ok",
+            "Warning":  "kpi-card-warning",
+            "Critical": "kpi-card-critical",
         }
-        box_class, status_class = status_map.get(status, ("kpi-box-warning", "status-warning"))
+        card_class = status_map.get(status, "kpi-card-warning")
 
-        st.markdown(f'<div class="{box_class}">', unsafe_allow_html=True)
-
-        # Fix: use 'is not None' to correctly handle current == 0
         value_str = f"{current:.1f}" if current is not None else "N/A"
-        st.metric(
-            label=f"{icon} {display_name}",
-            value=value_str,
-            delta=f"{change:+.1f}% vs last month",
-        )
+        delta_str = f"{change:+.1f}% vs last month"
 
-        st.markdown(f"""
-            <div class="status-badge {status_class}">{status}</div>
-            <div style="margin-top:8px; font-size:0.85rem;">
-                <strong>Target:</strong> {target:.1f}
+        html_content = f"""
+        <div class="kpi-card {card_class}">
+            <div class="kpi-title">{icon} {display_name}</div>
+            <div class="kpi-value">{value_str}</div>
+            <div class="kpi-delta">{delta_str}</div>
+            <div class="kpi-footer">
+                <span class="status-badge">{status}</span>
+                <span class="kpi-target">Target: {target:.1f}</span>
             </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("</div>", unsafe_allow_html=True)
+        </div>
+        """
+        st.markdown(html_content, unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------------------
@@ -287,7 +318,7 @@ def create_comparison_chart(kpis_dict: dict) -> go.Figure:
 
 def display_predictions(df: pd.DataFrame) -> None:
     """Render ML next-month predictions section."""
-    st.subheader("📈 Next-Month Predictions (ML Forecast)")
+    st.subheader(" Next-Month Predictions (ML Forecast)")
 
     predictions = ml_model.generate_all_predictions(df)
     cols = st.columns(5)
@@ -303,33 +334,33 @@ def display_predictions(df: pd.DataFrame) -> None:
                 )
                 date_str = pred["prediction_date"].strftime("%Y-%m-%d")
                 r2_str   = f"{pred['r2_score']:.2f}" if pred["r2_score"] is not None else "N/A"
-                st.caption(f"📅 {date_str} · R²={r2_str}")
+                st.caption(f" {date_str} · R²={r2_str}")
             else:
                 st.metric(label=display_name, value="N/A", delta="Insufficient data")
 
 
 def display_anomalies(df: pd.DataFrame) -> None:
     """Render the anomaly detection summary section."""
-    st.subheader("🔍 Anomaly Detection")
+    st.subheader(" Anomaly Detection")
 
     summary = ml_model.get_anomaly_summary(df)
 
     if summary["total_anomalies"] > 0:
         st.warning(
-            f"⚠️ Detected **{summary['total_anomalies']}** anomalies "
+            f" Detected **{summary['total_anomalies']}** anomalies "
             f"across **{len(summary['metrics_affected'])}** metric(s)."
         )
         for metric in summary["metrics_affected"]:
             detail = summary["details"][metric]
             with st.expander(
-                f"📊 {metric.replace('_', ' ').title()} — {detail['count']} anomaly(s)"
+                f" {metric.replace('_', ' ').title()} — {detail['count']} anomaly(s)"
             ):
                 if detail["records"]:
                     adf = pd.DataFrame(detail["records"])
                     adf["date"] = pd.to_datetime(adf["date"]).dt.strftime("%Y-%m-%d")
                     st.dataframe(adf, use_container_width=True)
     else:
-        st.success("✅ No anomalies detected in the current dataset.")
+        st.success(" No anomalies detected in the current dataset.")
 
 
 def display_alerts(df: pd.DataFrame, kpis_dict: dict) -> None:
@@ -374,16 +405,16 @@ def display_alerts(df: pd.DataFrame, kpis_dict: dict) -> None:
         for alert in alerts[:10]:
             if alert["type"] == "Critical":
                 st.error(
-                    f"🚨 **{alert['metric']}**: {alert['message']} "
+                    f" **{alert['metric']}**: {alert['message']} "
                     f"(Current: {alert['value']:.1f})"
                 )
             elif alert["type"] == "Warning":
                 st.warning(
-                    f"⚠️ **{alert['metric']}**: {alert['message']} "
+                    f" **{alert['metric']}**: {alert['message']} "
                     f"(Current: {alert['value']:.1f})"
                 )
             else:
-                st.info(f"📈 **{alert['metric']}**: {alert['message']}")
+                st.info(f" **{alert['metric']}**: {alert['message']}")
 
 
 # ---------------------------------------------------------------------------
@@ -392,12 +423,12 @@ def display_alerts(df: pd.DataFrame, kpis_dict: dict) -> None:
 
 def dashboard_page() -> None:
     """Main dashboard: KPI cards, charts, predictions, and anomaly section."""
-    st.title("🌍 Smart Environmental KPI Dashboard")
+    st.title(" Smart Environmental KPI Dashboard")
 
     # Date + weather header row
     col_date, col_weather = st.columns([3, 1])
     with col_date:
-        st.markdown(f"#### 📅 {datetime.now().strftime('%A, %B %d, %Y')}")
+        st.markdown(f"####  {datetime.now().strftime('%A, %B %d, %Y')}")
     with col_weather:
         st.markdown(f"#### {get_current_weather()}")
 
@@ -407,7 +438,7 @@ def dashboard_page() -> None:
         st.markdown("---")
     with col_toggle:
         live_mode = st.toggle(
-            "🔴 Live Monitoring",
+            " Live Monitoring",
             value=False,
             help="Auto-refreshes the page every 30 seconds",
         )
@@ -419,15 +450,15 @@ def dashboard_page() -> None:
             f'<meta http-equiv="refresh" content="{refresh_interval}">',
             unsafe_allow_html=True,
         )
-        st.caption(f"🔄 Page will auto-refresh every {refresh_interval} s")
+        st.caption(f" Page will auto-refresh every {refresh_interval} s")
 
     # Fetch data
     df         = database.fetch_data()
     targets_df = database.fetch_targets()
 
     if df.empty:
-        st.warning("⚠️ No data available.")
-        st.info("💡 Go to **📁 Data Management** to upload a CSV, or wait for the auto-seed.")
+        st.warning(" No data available.")
+        st.info(" Go to ** Data Management** to upload a CSV, or wait for the auto-seed.")
         return
 
     kpis = kpi_engine.get_latest_kpis(df, targets_df)
@@ -437,7 +468,7 @@ def dashboard_page() -> None:
     st.markdown("---")
 
     # KPI cards
-    st.subheader("📊 Current KPI Status")
+    st.subheader(" Current KPI Status")
     cols = st.columns(5)
     for idx, metric in enumerate(kpi_engine.METRICS):
         if metric in kpis:
@@ -446,12 +477,12 @@ def dashboard_page() -> None:
     st.markdown("---")
 
     # Comparison chart
-    st.subheader("📊 Actual vs Target Comparison")
+    st.subheader(" Actual vs Target Comparison")
     st.plotly_chart(create_comparison_chart(kpis), use_container_width=True)
     st.markdown("---")
 
     # Trend charts (tabbed)
-    st.subheader("📈 Trend Analysis")
+    st.subheader(" Trend Analysis")
     tabs = st.tabs([m.replace("_", " ").title() for m in kpi_engine.METRICS])
     for idx, metric in enumerate(kpi_engine.METRICS):
         with tabs[idx]:
@@ -481,10 +512,10 @@ def data_management_page() -> None:
     st.markdown("---")
 
     # Download template
-    st.subheader("📥 CSV Template")
+    st.subheader(" CSV Template")
     st.markdown("Download a sample template to see the expected column format.")
     st.download_button(
-        label="📥 Download Template CSV",
+        label=" Download Template CSV",
         data=data_loader.download_template_csv(),
         file_name="environmental_data_template.csv",
         mime="text/csv",
@@ -493,7 +524,7 @@ def data_management_page() -> None:
     st.markdown("---")
 
     # Upload section
-    st.subheader("📤 Upload New Data")
+    st.subheader(" Upload New Data")
     uploaded_file = st.file_uploader(
         "Choose a CSV file",
         type=["csv"],
@@ -504,19 +535,19 @@ def data_management_page() -> None:
         success, df_clean, message, range_warnings = data_loader.process_uploaded_file(uploaded_file)
 
         if success:
-            st.success(f"✅ {message}")
+            st.success(f" {message}")
 
             # Show range warnings (from pure data_loader — displayed here in UI layer)
             for w in range_warnings:
-                st.warning(f"⚠️ {w}")
+                st.warning(f" {w}")
 
-            st.subheader("📋 Data Preview (10 most recent rows)")
+            st.subheader(" Data Preview (10 most recent rows)")
             st.dataframe(
                 df_clean.sort_values("date", ascending=False).head(10),
                 use_container_width=True,
             )
 
-            if st.button("💾 Upload to Database", type="primary"):
+            if st.button(" Upload to Database", type="primary"):
                 ok, upload_msg = data_loader.upload_data_to_database(df_clean)
                 if ok:
                     st.success(upload_msg)
@@ -529,7 +560,7 @@ def data_management_page() -> None:
     st.markdown("---")
 
     # Current database viewer
-    st.subheader("📊 Current Database")
+    st.subheader(" Current Database")
     df = database.fetch_data()
 
     if not df.empty:
@@ -547,20 +578,20 @@ def data_management_page() -> None:
         )
 
         st.download_button(
-            label="📥 Download Current Data as CSV",
+            label=" Download Current Data as CSV",
             data=df.to_csv(index=False),
             file_name=f"environmental_data_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv",
         )
 
         st.markdown("---")
-        st.subheader("🗑️ Reset Database")
+        st.subheader(" Reset Database")
         st.warning("This will permanently delete all stored data and reload sample data.")
-        if st.button("⚠️ Reset & Reload Sample Data", type="secondary"):
+        if st.button(" Reset & Reload Sample Data", type="secondary"):
             database.clear_all_data()
             seed_df = generate_sample_data(days=90, output_file=None)
             database.save_data(seed_df)
-            st.success("✅ Database reset with fresh 90-day sample data.")
+            st.success(" Database reset with fresh 90-day sample data.")
             st.rerun()
     else:
         st.info("No data in database yet. Upload a CSV or reset to reload sample data.")
@@ -571,7 +602,7 @@ def settings_page() -> None:
     st.title("⚙️ Settings")
     st.markdown("---")
 
-    st.subheader("🎯 Customise KPI Targets")
+    st.subheader(" Customise KPI Targets")
     st.markdown(
         "Adjust target values and thresholds for each environmental metric. "
         "Changes take effect immediately on the Dashboard."
@@ -630,11 +661,11 @@ def main() -> None:
 
 Monitor and analyse 5 environmental metrics:
 
-🌫️ Air Quality Index (AQI)
-💧 Water Usage
-⚡ Energy Consumption
-🗑️ Waste Generated
-🏭 CO₂ Emissions
+ Air Quality Index (AQI)
+ Water Usage
+ Energy Consumption
+ Waste Generated
+ CO₂ Emissions
 
 **Features**
 - Live KPI monitoring
