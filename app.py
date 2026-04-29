@@ -59,6 +59,8 @@ st.markdown("""
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
+    background-color: var(--background-color);
+    border: 1px solid var(--secondary-background-color);
 }
 
 .kpi-title {
@@ -68,6 +70,7 @@ st.markdown("""
     display: flex;
     align-items: center;
     gap: 8px;
+    color: var(--text-color);
 }
 
 .kpi-value {
@@ -75,6 +78,7 @@ st.markdown("""
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: 4px;
+    color: var(--text-color);
 }
 
 .kpi-delta {
@@ -89,38 +93,46 @@ st.markdown("""
     align-items: center;
     padding-top: 12px;
     font-size: 0.9rem;
+    color: var(--text-color);
+    border-top: 1px solid var(--secondary-background-color);
 }
 
 .kpi-target {
     font-weight: 600;
 }
 
-/* Status: OK */
-.kpi-card-ok { background-color: rgba(76,175,80,0.08); border-left: 4px solid #4caf50; }
-.kpi-card-ok .kpi-title { color: #33691e; }
-.kpi-card-ok .kpi-value { color: #2e7d32; }
-.kpi-card-ok .kpi-delta { color: #388e3c; }
-.kpi-card-ok .kpi-footer { border-top: 1px solid rgba(76,175,80,0.2); }
-.kpi-card-ok .kpi-target { color: #33691e; }
-.kpi-card-ok .status-badge { background-color: #4caf50; color: white; }
+/* Status-specific card styling */
+.kpi-card-ok {
+    background-color: rgba(76,175,80,0.08);
+    border-left: 4px solid #4caf50;
+}
+.kpi-card-warning {
+    background-color: rgba(255,152,0,0.08);
+    border-left: 4px solid #ff9800;
+}
+.kpi-card-critical {
+    background-color: rgba(244,67,54,0.08);
+    border-left: 4px solid #f44336;
+}
 
-/* Status: Warning */
-.kpi-card-warning { background-color: rgba(255,152,0,0.08); border-left: 4px solid #ff9800; }
-.kpi-card-warning .kpi-title { color: #e65100; }
-.kpi-card-warning .kpi-value { color: #bf360c; }
-.kpi-card-warning .kpi-delta { color: #f57c00; }
-.kpi-card-warning .kpi-footer { border-top: 1px solid rgba(255,152,0,0.2); }
-.kpi-card-warning .kpi-target { color: #e65100; }
-.kpi-card-warning .status-badge { background-color: #ff9800; color: white; }
+/* Delta text inherits appropriate status color */
+.kpi-card-ok .kpi-delta {
+    color: #4caf50;
+}
+.kpi-card-warning .kpi-delta {
+    color: #ff9800;
+}
+.kpi-card-critical .kpi-delta {
+    color: #f44336;
+}
 
-/* Status: Critical */
-.kpi-card-critical { background-color: rgba(244,67,54,0.08); border-left: 4px solid #f44336; }
-.kpi-card-critical .kpi-title { color: #c62828; }
-.kpi-card-critical .kpi-value { color: #b71c1c; }
-.kpi-card-critical .kpi-delta { color: #c62828; }
-.kpi-card-critical .kpi-footer { border-top: 1px solid rgba(244,67,54,0.2); }
-.kpi-card-critical .kpi-target { color: #c62828; }
-.kpi-card-critical .status-badge { background-color: #f44336; color: white; }
+/* Status badge uses primary theme color */
+.kpi-card-ok .status-badge,
+.kpi-card-warning .status-badge,
+.kpi-card-critical .status-badge {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}
 
 /* Status badge pill */
 .status-badge {
